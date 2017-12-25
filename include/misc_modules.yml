@@ -11,22 +11,22 @@
       url: "http://localhost:8080/"
       method: POST
       return_content: yes
+    check_mode: no
+    # NOTE: uri module does not support check mode. This task sends a actual request even if check mode
     register: uri_result
   - include_tasks: _combine_results.yml name=uri result="{{ uri_result }}"
 
   - name: 99.2.2 get_url module - already downloaded
-    uri:
-      url: "https://github.com/innossh/ansible-changed-example/master/centos7/src/some_file?raw=true"
+    get_url:
+      url: "https://raw.githubusercontent.com/innossh/ansible-changed-example/master/centos7/src/some_file"
       dest: /src/some_file
-    check_mode: no
     register: get_url_already_result
   - include_tasks: _combine_results.yml name=get_url_already result="{{ get_url_already_result }}"
 
   - name: 99.2.3 get_url module - new
-    uri:
-      url: "https://github.com/innossh/ansible-changed-example/master/centos7/src/some_file?raw=true"
+    get_url:
+      url: "https://raw.githubusercontent.com/innossh/ansible-changed-example/master/centos7/src/some_file"
       dest: /tmp/some_file
-    check_mode: no
     register: get_url_new_result
   - include_tasks: _combine_results.yml name=get_url_new result="{{ get_url_new_result }}"
 
@@ -34,6 +34,6 @@
   - name: 99.3.1 git module
     git:
       repo: "https://github.com/innossh/ansible-changed-example.git"
-      dest: /src/ansible-examples
+      dest: /tmp/ansible-examples
     register: git_result
   - include_tasks: _combine_results.yml name=git result="{{ git_result }}"
