@@ -1,0 +1,20 @@
+---
+#options:
+#  result:
+#    required: true
+#    description:
+#      - Result of a task
+#  name:
+#    required: true
+#    description:
+#      - Name of a task
+
+- set_fact:
+    tmp_result: "{{ result | combine(dict) | json_query(query) }}"
+  vars:
+    dict:
+      _name: "{{ name }}"
+    query: "{_name: _name, changed: changed}"
+
+- set_fact:
+    results: "{{ results | default([]) + [tmp_result] }}"

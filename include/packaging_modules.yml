@@ -1,0 +1,33 @@
+- block:
+  - name: 3.1.1 yum module - already installed
+    yum:
+      name: python
+      state: present
+    register: yum_already_result
+  - include_tasks: _combine_results.yml name=yum_already result="{{ yum_already_result }}"
+
+  - name: 3.1.2 yum module - update
+    yum:
+      name: util-linux
+      state: latest
+    register: yum_update_result
+  - include_tasks: _combine_results.yml name=yum_update result="{{ yum_update_result }}"
+
+- block:
+  - name: 3.2.1 pip module - already installed
+    pip:
+      name: setuptools
+      state: present
+    register: pip_already_result
+    environment:
+      LD_LIBRARY_PATH: "/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64:/opt/rh/httpd24/root/usr/lib64"
+  - include_tasks: _combine_results.yml name=pip_already result="{{ pip_already_result }}"
+
+  - name: 3.2.2 pip module - update
+    pip:
+      name: gunicorn
+      state: latest
+    register: pip_update_result
+    environment:
+      LD_LIBRARY_PATH: "/opt/rh/rh-python35/root/usr/lib64:/opt/rh/rh-nodejs6/root/usr/lib64:/opt/rh/httpd24/root/usr/lib64"
+  - include_tasks: _combine_results.yml name=pip_update result="{{ pip_update_result }}"

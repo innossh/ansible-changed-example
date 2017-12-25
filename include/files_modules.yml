@@ -1,0 +1,68 @@
+- block:
+  - name: 2.1.1 file module - touch
+    file:
+      path: /tmp/touch.txt
+      state: touch
+    register: file_touch_result
+  - include_tasks: _combine_results.yml name=file_touch result="{{ file_touch_result }}"
+
+  - name: 2.1.2 file module - already linked
+    file:
+      src: usr/bin
+      path: /bin
+      state: link
+    register: file_link_same_result
+  - include_tasks: _combine_results.yml name=file_link_same result="{{ file_link_same_result }}"
+
+  - name: 2.1.3 file module - create link
+    file:
+      src: /etc/hosts
+      path: /tmp/link.txt
+      state: link
+    register: file_link_new_result
+  - include_tasks: _combine_results.yml name=file_link_new result="{{ file_link_new_result }}"
+
+- block:
+  - name: 2.2.1 copy module - same content
+    copy:
+      content: |
+        127.0.0.1       localhost
+        ::1     localhost
+      dest: /etc/hosts
+    register: copy_same_result
+  - include_tasks: _combine_results.yml name=copy_same result="{{ copy_same_result }}"
+
+  - name: 2.2.2 copy module - different content
+    copy:
+      content: |
+        127.0.0.1 localhost
+      dest: /etc/hosts
+    register: copy_different_result
+  - include_tasks: _combine_results.yml name=copy_different result="{{ copy_different_result }}"
+
+- block:
+  - name: 2.3.1 lineinfile - no matches
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^1\.2\.3\.4(.*)$'
+      line: '#1.2.3.4\1'
+      backrefs: yes
+    register: lineinfile_no_result
+  - include_tasks: _combine_results.yml name=lineinfile_no result="{{ lineinfile_no_result }}"
+
+  - name: 2.3.2 lineinfile - replace
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^::1(.*)$'
+      line: '#::1\1'
+      backrefs: yes
+    register: lineinfile_replace_result
+  - include_tasks: _combine_results.yml name=lineinfile_replace result="{{ lineinfile_replace_result }}"
+
+- block:
+  - name: 2.4.1 find
+    find:
+      paths: /tmp
+      age: 2d
+    register: find_result
+  - include_tasks: _combine_results.yml name=find result="{{ find_result }}"

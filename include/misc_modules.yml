@@ -1,0 +1,39 @@
+- block:
+  - name: 99.1.1 set_fact module
+    set_fact:
+      foo: bar
+    register: set_fact_result
+  - include_tasks: _combine_results.yml name=set_fact result="{{ set_fact_result }}"
+
+- block:
+  - name: 99.2.1 uri module
+    uri:
+      url: "http://localhost:8080/"
+      method: POST
+      return_content: yes
+    register: uri_result
+  - include_tasks: _combine_results.yml name=uri result="{{ uri_result }}"
+
+  - name: 99.2.2 get_url module - already downloaded
+    uri:
+      url: "https://github.com/innossh/ansible-changed-example/master/centos7/src/some_file?raw=true"
+      dest: /src/some_file
+    check_mode: no
+    register: get_url_already_result
+  - include_tasks: _combine_results.yml name=get_url_already result="{{ get_url_already_result }}"
+
+  - name: 99.2.3 get_url module - new
+    uri:
+      url: "https://github.com/innossh/ansible-changed-example/master/centos7/src/some_file?raw=true"
+      dest: /tmp/some_file
+    check_mode: no
+    register: get_url_new_result
+  - include_tasks: _combine_results.yml name=get_url_new result="{{ get_url_new_result }}"
+
+- block:
+  - name: 99.3.1 git module
+    git:
+      repo: "https://github.com/innossh/ansible-changed-example.git"
+      dest: /src/ansible-examples
+    register: git_result
+  - include_tasks: _combine_results.yml name=git result="{{ git_result }}"

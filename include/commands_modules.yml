@@ -1,0 +1,12 @@
+- block:
+  - name: 1.1.1 shell module
+    shell: date
+    check_mode: no
+    register: shell_result
+  - include_tasks: _combine_results.yml name=shell result="{{ shell_result }}"
+
+  - name: 1.1.2 command module
+    command: date
+    check_mode: no
+    register: command_result
+  - include_tasks: _combine_results.yml name=shell result="{{ command_result }}"

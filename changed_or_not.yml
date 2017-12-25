@@ -1,0 +1,21 @@
+---
+- hosts: containers
+  connection: docker
+  gather_facts: False
+
+  tasks:
+    - import_tasks: include/commands_modules.yml
+      tags: commands
+
+    - import_tasks: include/files_modules.yml
+      tags: files
+
+    - import_tasks: include/packaging_modules.yml
+      tags: packaging
+
+    - import_tasks: include/misc_modules.yml
+      tags: misc
+
+    - debug:
+        var: results
+      tags: always

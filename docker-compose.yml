@@ -1,0 +1,9 @@
+version: '3'
+services:
+  centos7:
+    image: python-sample-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./centos7/etc/hosts:/etc/hosts
+      - ./centos7/src/some_file:/src/some_file
